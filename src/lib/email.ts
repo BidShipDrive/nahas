@@ -3,10 +3,7 @@ import { siteConfig } from "@/lib/site-config";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-// Resend's shared sandbox sender — works immediately with no domain setup.
-// Once bidshipdrive.com is verified in Resend, swap this for something like
-// "BidShipDrive <notifications@bidshipdrive.com>".
-const FROM_ADDRESS = "BidShipDrive Notifications <onboarding@resend.dev>";
+const FROM_ADDRESS = "BidShipDrive Notifications <notifications@bidshipdrive.com>";
 
 export async function sendNotificationEmail(
   subject: string,
