@@ -25,7 +25,8 @@
   --animate-drive-by: drive-by 16s linear infinite;
   --animate-road-scroll: road-scroll 1.2s linear infinite;
   --animate-car-bob: car-bob 2.4s ease-in-out infinite;
-  --animate-drift: drift 12s ease-in-out infinite;
+  --animate-twinkle: twinkle 4s ease-in-out infinite;
+  --animate-shooting-star: shooting-star 8s linear infinite;
 }
 
 @keyframes drive-by {
@@ -56,15 +57,33 @@
   }
 }
 
-@keyframes drift {
+@keyframes twinkle {
   0%,
   100% {
-    transform: translate(0, 0);
-    opacity: 0.2;
+    opacity: 0.25;
+    transform: scale(0.8);
   }
   50% {
-    transform: translate(6px, -10px);
-    opacity: 0.6;
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes shooting-star {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(30deg);
+  }
+  2% {
+    opacity: 1;
+  }
+  10% {
+    opacity: 0;
+    transform: translate(220px, 130px) rotate(30deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(220px, 130px) rotate(30deg);
   }
 }
 

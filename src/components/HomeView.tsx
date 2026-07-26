@@ -29,11 +29,11 @@ export function HomeView({ cars, reviews }: { cars: Car[]; reviews: Review[] }) 
               whitespace-nowrap + a smaller mobile size keeps it on one line on phones. */}
           <h1
             dir="ltr"
-            className="text-2xl sm:text-5xl font-bold tracking-tight whitespace-nowrap"
+            className="text-2xl sm:text-5xl font-bold tracking-tight whitespace-nowrap drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]"
           >
             We Bid. We Ship. You Drive.
           </h1>
-          <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto">{dict.hero.subtitle}</p>
+          <p className="mt-4 text-lg text-slate-300 max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">{dict.hero.subtitle}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/cars"
