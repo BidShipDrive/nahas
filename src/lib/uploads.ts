@@ -1,5 +1,6 @@
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { getStore } from "@netlify/blobs";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB per photo
@@ -12,30 +13,41 @@ export type SavedUpload = {
   contentType: string;
 };
 
-// Saves uploaded review photos to /public/uploads/reviews and returns their
-// public URLs (same comma-separated-URL convention as Car.images) plus the raw
-// buffers, so the caller can also attach them to the notification email without
-// re-reading the files from disk.
+// Saves uploaded review photos and returns their public URLs (served back out
+// via src/app/uploads/reviews/[filename]/route.ts, same comma-separated-URL
+// convention as Car.images) plus the raw buffers, so the caller can also
+// attach them to the notification email without re-reading them from storage.
 //
-// NOTE: this writes to the local filesystem, which works for this Mac/dev setup
-// but won't persist on most serverless hosts (e.g. Vercel's filesystem is
-// read-only in production). Before deploying, swap this for real object storage
-// (S3, Vercel Blob, Cloudinary, etc.) — same caveat as the SQLite dev database.
+// In production (on Netlify, where NETLIFY=true is set automatically) this
+// writes to Netlify Blobs, which persists across requests/deploys. In local
+// dev there's no Blobs context configured, so it falls back to writing to
+// /public/uploads/reviews on disk, which is fine for a Mac/dev setup.
 export async function saveUploadedImages(files: File[]): Promise<SavedUpload[]> {
   const valid = files.filter((f) => f.size > 0).slice(0, MAX_FILES);
+  const useBlobs = process.env.NETLIFY === "true";
+  const store = useBlobs ? getStore("review-photos") : null;
 
-  const uploadDir = path.join(process.cwd(), "public", "uploads", "reviews");
-  await mkdir(uploadDir, { recursive: true });
+  let uploadDir: string | null = null;
+  if (!useBlobs) {
+    uploadDir = path.join(process.cwd(), "public", "uploads", "reviews");
+    await mkdir(uploadDir, { recursive: true });
+  }
 
   const saved: SavedUpload[] = [];
   for (const file of valid) {
     if (file.size > MAX_FILE_BYTES) continue;
     if (!ALLOWED_TYPES.has(file.type)) continue;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${crypto.randomUUID()}${ext}`;
-    await writeFile(path.join(uploadDir, filename), buffer);
+
+    if (store) {
+      await store.set(filename, arrayBuffer, { metadata: { contentType: file.type } });
+    } else {
+      await writeFile(path.join(uploadDir!, filename), buffer);
+    }
 
     saved.push({ url: `/uploads/reviews/${filename}`, buffer, filename, contentType: file.type });
   }

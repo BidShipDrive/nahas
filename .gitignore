@@ -45,5 +45,6 @@ next-env.d.ts
 /dev.db
 /dev.db-journal
 
-# user-uploaded review photos (local-disk only for now, see src/lib/uploads.ts)
+# local-dev-only fallback for review photo uploads (see src/lib/uploads.ts) —
+# production uses Netlify Blobs instead
 /public/uploads
