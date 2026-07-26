@@ -5,6 +5,7 @@ import type { Car, Review } from "@/generated/prisma/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { siteConfig } from "@/lib/site-config";
 import { CarsShowcase } from "./CarsShowcase";
+import { HeroScene } from "./HeroScene";
 import { ReviewCard } from "./ReviewCard";
 
 export function HomeView({ cars, reviews }: { cars: Car[]; reviews: Review[] }) {
@@ -21,8 +22,9 @@ export function HomeView({ cars, reviews }: { cars: Car[]; reviews: Review[] }) 
 
   return (
     <div>
-      <section className="bg-slate-950 text-white">
-        <div className="mx-auto max-w-6xl px-4 py-20 text-center">
+      <section className="relative bg-slate-950 text-white overflow-hidden">
+        <HeroScene />
+        <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-40 sm:pt-28 sm:pb-56 text-center">
           {/* Brand tagline — always shown in English, regardless of selected language.
               whitespace-nowrap + a smaller mobile size keeps it on one line on phones. */}
           <h1

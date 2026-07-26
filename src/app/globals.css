@@ -21,6 +21,53 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --animate-drive-by: drive-by 16s linear infinite;
+  --animate-road-scroll: road-scroll 1.2s linear infinite;
+  --animate-car-bob: car-bob 2.4s ease-in-out infinite;
+  --animate-drift: drift 12s ease-in-out infinite;
+}
+
+@keyframes drive-by {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-135vw);
+  }
+}
+
+@keyframes road-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes car-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(6px, -10px);
+    opacity: 0.6;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
