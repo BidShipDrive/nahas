@@ -23,7 +23,7 @@
 
 @theme {
   --animate-drive-by: drive-by 16s linear infinite;
-  --animate-road-scroll: road-scroll 1.2s linear infinite;
+  --animate-road-scroll: road-scroll 8s linear infinite;
   --animate-car-bob: car-bob 2.4s ease-in-out infinite;
   --animate-twinkle: twinkle 4s ease-in-out infinite;
   --animate-shooting-star: shooting-star 8s linear infinite;
