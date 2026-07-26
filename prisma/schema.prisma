@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Car {
+  id              String    @id @default(cuid())
+  make            String
+  model           String
+  year            Int
+  price           Int
+  mileage         Int?
+  options         String?
+  optionsAr       String?
+  condition       String?
+  conditionAr     String?
+  expectedArrival DateTime?
+  description     String?
+  descriptionAr   String?
+  images          String    @default("")
+  status          String    @default("available")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  inquiries       Inquiry[]
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  carId     String?
+  car       Car?     @relation(fields: [carId], references: [id], onDelete: SetNull)
+  name      String
+  contact   String
+  message   String?
+  createdAt DateTime @default(now())
+}
+
+model CustomRequest {
+  id          String   @id @default(cuid())
+  name        String
+  contact     String
+  make        String?
+  model       String?
+  yearFrom    Int?
+  yearTo      Int?
+  mileageMax  Int?
+  mileageMin  Int?
+  budgetMin   Int?
+  budgetMax   Int?
+  notes       String?
+  status      String   @default("new")
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id                String    @id @default(cuid())
+  trackingCode      String    @unique
+  customerName      String
+  customerPhone     String
+  customerEmail     String?
+  carDescription    String
+  status            String    @default("bid_placed")
+  estimatedArrival  DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  customerName  String
+  carPurchased  String?
+  rating        Int      @default(5)
+  comment       String
+  images        String   @default("")
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
