@@ -4,6 +4,8 @@ import { formatPrice } from "@/lib/format";
 import { logout } from "@/app/actions/auth";
 import { deleteCar } from "@/app/actions/cars";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const cars = await db.car.findMany({ orderBy: { createdAt: "desc" } });
   const [inquiryCount, customRequestCount, orderCount, reviewCount] = await Promise.all([

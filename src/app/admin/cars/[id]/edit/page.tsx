@@ -3,6 +3,8 @@ import { db } from "@/lib/db";
 import { CarForm } from "@/components/CarForm";
 import { updateCar } from "@/app/actions/cars";
 
+export const dynamic = "force-dynamic";
+
 export default async function EditCarPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const car = await db.car.findUnique({ where: { id } });

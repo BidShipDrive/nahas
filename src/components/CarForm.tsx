@@ -10,6 +10,9 @@ export function CarForm({
   const expectedArrivalValue = car?.expectedArrival
     ? new Date(car.expectedArrival).toISOString().slice(0, 10)
     : "";
+  const auctionEndsAtValue = car?.auctionEndsAt
+    ? new Date(car.auctionEndsAt).toISOString().slice(0, 16)
+    : "";
 
   return (
     <form action={action} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -27,6 +30,20 @@ export function CarForm({
       </Field>
       <Field label="Mileage">
         <input type="number" name="mileage" defaultValue={car?.mileage ?? undefined} className={inputClass} />
+      </Field>
+      <Field label="MMR Range — Low (USD)">
+        <input type="number" name="mmrLow" defaultValue={car?.mmrLow ?? undefined} className={inputClass} />
+      </Field>
+      <Field label="MMR Range — High (USD)">
+        <input type="number" name="mmrHigh" defaultValue={car?.mmrHigh ?? undefined} className={inputClass} />
+      </Field>
+      <Field label="Auction Ends At">
+        <input
+          type="datetime-local"
+          name="auctionEndsAt"
+          defaultValue={auctionEndsAtValue}
+          className={inputClass}
+        />
       </Field>
       <Field label="Condition (English)">
         <input

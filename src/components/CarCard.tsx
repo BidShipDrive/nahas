@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Car } from "@/generated/prisma/client";
 import { formatPrice, formatMileage, carImages } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
+import { AuctionCountdown } from "./AuctionCountdown";
 
 const statusStyles: Record<string, string> = {
   available: "bg-green-100 text-green-800",
@@ -51,6 +52,11 @@ export function CarCard({ car }: { car: Car }) {
         </div>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{formatMileage(car.mileage)}</p>
         <p className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">{formatPrice(car.price)}</p>
+        {car.auctionEndsAt && (
+          <div className="mt-2">
+            <AuctionCountdown endsAt={car.auctionEndsAt} />
+          </div>
+        )}
         <p className="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
           {dict.cars.viewDetails} →
         </p>

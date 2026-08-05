@@ -2,6 +2,8 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCustomRequestsPage() {
   const requests = await db.customRequest.findMany({ orderBy: { createdAt: "desc" } });
 

@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { HomeView } from "@/components/HomeView";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [cars, reviews] = await Promise.all([
     db.car.findMany({

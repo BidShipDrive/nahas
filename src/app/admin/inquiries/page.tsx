@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminInquiriesPage() {
   const inquiries = await db.inquiry.findMany({
     orderBy: { createdAt: "desc" },

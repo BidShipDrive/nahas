@@ -5,6 +5,7 @@ import type { Car } from "@/generated/prisma/client";
 import { formatPrice, formatMileage, carImages, formatDate } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { InquiryForm } from "./InquiryForm";
+import { AuctionCountdown } from "./AuctionCountdown";
 
 export function CarDetailView({ car }: { car: Car }) {
   const { dict, lang } = useLanguage();
@@ -51,6 +52,16 @@ export function CarDetailView({ car }: { car: Car }) {
           {car.year} {car.make} {car.model}
         </h1>
         <p className="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">{formatPrice(car.price)}</p>
+        {car.mmrLow != null && car.mmrHigh != null && (
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {dict.cars.mmrRange}: {formatPrice(car.mmrLow)} – {formatPrice(car.mmrHigh)}
+          </p>
+        )}
+        {car.auctionEndsAt && (
+          <div className="mt-3">
+            <AuctionCountdown endsAt={car.auctionEndsAt} />
+          </div>
+        )}
 
         <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
           <div>

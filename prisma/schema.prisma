@@ -16,6 +16,9 @@ model Car {
   model           String
   year            Int
   price           Int
+  mmrLow          Int?
+  mmrHigh         Int?
+  auctionEndsAt   DateTime?
   mileage         Int?
   options         String?
   optionsAr       String?
