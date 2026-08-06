@@ -4,19 +4,32 @@ import { useState } from "react";
 import type { Car } from "@/generated/prisma/client";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { CarCard } from "./CarCard";
+import { Autocomplete } from "./Autocomplete";
+import { CAR_MAKES } from "@/lib/car-makes";
+import { modelsForMake } from "@/lib/car-models";
+
+const filterInputClass =
+  "w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm";
 
 export function CarsListView({ cars }: { cars: Car[] }) {
   const { dict } = useLanguage();
   const [filter, setFilter] = useState<"all" | "bidding" | "buy_now">("all");
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
 
-  const filtered = cars.filter((car) => (filter === "all" ? true : car.pricingType === filter));
+  const filtered = cars.filter((car) => {
+    if (filter !== "all" && car.pricingType !== filter) return false;
+    if (make && car.make.toLowerCase() !== make.toLowerCase()) return false;
+    if (model && !car.model.toLowerCase().includes(model.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
       <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{dict.cars.title}</h1>
       <p className="mt-2 text-slate-500 dark:text-slate-400">{dict.cars.subtitle}</p>
 
-      <div className="mt-6 flex gap-2">
+      <div className="mt-6 flex flex-wrap gap-2">
         {(["all", "bidding", "buy_now"] as const).map((key) => (
           <button
             key={key}
@@ -31,6 +44,31 @@ export function CarsListView({ cars }: { cars: Car[] }) {
             {key === "all" ? dict.cars.filterAll : key === "bidding" ? dict.cars.filterBidding : dict.cars.filterBuyNow}
           </button>
         ))}
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{dict.customize.formMake}</span>
+          <Autocomplete
+            name="filterMake"
+            options={CAR_MAKES}
+            className={filterInputClass}
+            onValueChange={(value) => {
+              setMake(value);
+              setModel("");
+            }}
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{dict.customize.formModel}</span>
+          <Autocomplete
+            key={`model-${make}`}
+            name="filterModel"
+            options={modelsForMake(make)}
+            className={filterInputClass}
+            onValueChange={setModel}
+          />
+        </label>
       </div>
 
       {filtered.length === 0 ? (
