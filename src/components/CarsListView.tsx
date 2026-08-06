@@ -7,9 +7,9 @@ import { CarCard } from "./CarCard";
 
 export function CarsListView({ cars }: { cars: Car[] }) {
   const { dict } = useLanguage();
-  const [filter, setFilter] = useState<"all" | "available" | "incoming">("all");
+  const [filter, setFilter] = useState<"all" | "bidding" | "buy_now">("all");
 
-  const filtered = cars.filter((car) => (filter === "all" ? true : car.status === filter));
+  const filtered = cars.filter((car) => (filter === "all" ? true : car.pricingType === filter));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -17,7 +17,7 @@ export function CarsListView({ cars }: { cars: Car[] }) {
       <p className="mt-2 text-slate-500 dark:text-slate-400">{dict.cars.subtitle}</p>
 
       <div className="mt-6 flex gap-2">
-        {(["all", "available", "incoming"] as const).map((key) => (
+        {(["all", "bidding", "buy_now"] as const).map((key) => (
           <button
             key={key}
             type="button"
@@ -28,7 +28,7 @@ export function CarsListView({ cars }: { cars: Car[] }) {
                 : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
             }`}
           >
-            {key === "all" ? dict.cars.filterAll : key === "available" ? dict.cars.filterAvailable : dict.cars.filterIncoming}
+            {key === "all" ? dict.cars.filterAll : key === "bidding" ? dict.cars.filterBidding : dict.cars.filterBuyNow}
           </button>
         ))}
       </div>
