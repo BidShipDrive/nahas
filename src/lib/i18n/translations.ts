@@ -22,7 +22,7 @@ export const translations = {
       ctaCustomize: "Choose Your Own Car",
     },
     home: {
-      showcaseTitle: "Cars We Have",
+      showcaseTitle: "Cars at Auction",
       showcaseSubtitle: "A look at what's currently available or arriving soon.",
       showcaseViewAll: "View all available cars →",
       showcaseEmpty: "No cars listed yet — check back soon.",
@@ -177,7 +177,7 @@ export const translations = {
       ctaCustomize: "اختر سيارتك الخاصة",
     },
     home: {
-      showcaseTitle: "السيارات المتوفرة لدينا",
+      showcaseTitle: "السيارات في المزاد",
       showcaseSubtitle: "نظرة على ما هو متوفر حالياً أو سيصل قريباً.",
       showcaseViewAll: "عرض جميع السيارات المتوفرة ←",
       showcaseEmpty: "لا توجد سيارات مدرجة بعد — تحقق قريباً.",
