@@ -25,17 +25,17 @@ export function CarForm({
       <Field label="Year">
         <input type="number" name="year" defaultValue={car?.year} required className={inputClass} />
       </Field>
+      <Field label="Pricing Type">
+        <select name="pricingType" defaultValue={car?.pricingType ?? "bidding"} className={inputClass}>
+          <option value="bidding">Bidding (starting price)</option>
+          <option value="buy_now">Buy Now (fixed price)</option>
+        </select>
+      </Field>
       <Field label="Price (USD)">
         <input type="number" name="price" defaultValue={car?.price} required className={inputClass} />
       </Field>
       <Field label="Mileage">
         <input type="number" name="mileage" defaultValue={car?.mileage ?? undefined} className={inputClass} />
-      </Field>
-      <Field label="MMR Range — Low (USD)">
-        <input type="number" name="mmrLow" defaultValue={car?.mmrLow ?? undefined} className={inputClass} />
-      </Field>
-      <Field label="MMR Range — High (USD)">
-        <input type="number" name="mmrHigh" defaultValue={car?.mmrHigh ?? undefined} className={inputClass} />
       </Field>
       <Field label="Auction Ends At">
         <input

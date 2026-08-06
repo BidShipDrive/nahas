@@ -51,12 +51,10 @@ export function CarDetailView({ car }: { car: Car }) {
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
           {car.year} {car.make} {car.model}
         </h1>
-        <p className="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">{formatPrice(car.price)}</p>
-        {car.mmrLow != null && car.mmrHigh != null && (
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            {dict.cars.mmrRange}: {formatPrice(car.mmrLow)} – {formatPrice(car.mmrHigh)}
-          </p>
-        )}
+        <p className="mt-2 text-3xl font-bold text-blue-600 dark:text-blue-400">
+          {car.pricingType === "bidding" && `${dict.cars.startingPrice}: `}
+          {formatPrice(car.price)}
+        </p>
         {car.auctionEndsAt && (
           <div className="mt-3">
             <AuctionCountdown endsAt={car.auctionEndsAt} />

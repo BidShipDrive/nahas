@@ -51,7 +51,12 @@ export function CarCard({ car }: { car: Car }) {
           </span>
         </div>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{formatMileage(car.mileage)}</p>
-        <p className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">{formatPrice(car.price)}</p>
+        <p className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">
+          {car.pricingType === "bidding" && (
+            <span className="block text-xs font-medium text-slate-500 dark:text-slate-400">{dict.cars.startingPrice}</span>
+          )}
+          {formatPrice(car.price)}
+        </p>
         {car.auctionEndsAt && (
           <div className="mt-2">
             <AuctionCountdown endsAt={car.auctionEndsAt} />

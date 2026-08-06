@@ -19,8 +19,7 @@ function carDataFromForm(formData: FormData) {
     model: String(formData.get("model") ?? "").trim(),
     year: Number(formData.get("year")),
     price: Number(formData.get("price")),
-    mmrLow: formData.get("mmrLow") ? Number(formData.get("mmrLow")) : null,
-    mmrHigh: formData.get("mmrHigh") ? Number(formData.get("mmrHigh")) : null,
+    pricingType: String(formData.get("pricingType") ?? "bidding"),
     auctionEndsAt: formData.get("auctionEndsAt")
       ? new Date(String(formData.get("auctionEndsAt")))
       : null,
