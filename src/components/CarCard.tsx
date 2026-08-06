@@ -57,6 +57,7 @@ export function CarCard({ car }: { car: Car }) {
           )}
           {formatPrice(car.price)}
         </p>
+        <p className="text-xs text-slate-500 dark:text-slate-400">{dict.cars.priceExcludes}</p>
         {car.auctionEndsAt && (
           <div className="mt-2">
             <AuctionCountdown endsAt={car.auctionEndsAt} />

@@ -55,6 +55,7 @@ export function CarDetailView({ car }: { car: Car }) {
           {car.pricingType === "bidding" && `${dict.cars.startingPrice}: `}
           {formatPrice(car.price)}
         </p>
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{dict.cars.priceExcludes}</p>
         {car.auctionEndsAt && (
           <div className="mt-3">
             <AuctionCountdown endsAt={car.auctionEndsAt} />
