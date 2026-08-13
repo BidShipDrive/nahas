@@ -30,38 +30,22 @@ export function CarForm({
       <Field label="Mileage">
         <input type="number" name="mileage" defaultValue={car?.mileage ?? undefined} className={inputClass} />
       </Field>
-      <Field label="Condition (English)">
-        <input
-          name="condition"
-          defaultValue={car?.condition ?? undefined}
-          placeholder="e.g. Clean title, minor front damage"
-          className={inputClass}
-        />
-      </Field>
-      <Field label="Condition (Arabic)">
-        <input
-          name="conditionAr"
-          defaultValue={car?.conditionAr ?? undefined}
-          dir="rtl"
-          className={inputClass}
-        />
-      </Field>
       <div className="sm:col-span-2">
-        <Field label="Options (English)">
+        <Field label="Condition">
           <input
-            name="options"
-            defaultValue={car?.options ?? undefined}
-            placeholder="e.g. Backup sensors, Sunroof, Leather seats, Bluetooth"
+            name="condition"
+            defaultValue={car?.condition ?? undefined}
+            placeholder="e.g. Clean title, minor front damage"
             className={inputClass}
           />
         </Field>
       </div>
       <div className="sm:col-span-2">
-        <Field label="Options (Arabic)">
+        <Field label="Options">
           <input
-            name="optionsAr"
-            defaultValue={car?.optionsAr ?? undefined}
-            dir="rtl"
+            name="options"
+            defaultValue={car?.options ?? undefined}
+            placeholder="e.g. Backup sensors, Sunroof, Leather seats, Bluetooth"
             className={inputClass}
           />
         </Field>
@@ -76,19 +60,8 @@ export function CarForm({
         </select>
       </Field>
       <div className="sm:col-span-2">
-        <Field label="Description (English)">
+        <Field label="Description">
           <textarea name="description" defaultValue={car?.description ?? undefined} rows={4} className={inputClass} />
-        </Field>
-      </div>
-      <div className="sm:col-span-2">
-        <Field label="Description (Arabic)">
-          <textarea
-            name="descriptionAr"
-            defaultValue={car?.descriptionAr ?? undefined}
-            dir="rtl"
-            rows={4}
-            className={inputClass}
-          />
         </Field>
       </div>
       <div className="sm:col-span-2">

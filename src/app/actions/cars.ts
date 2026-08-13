@@ -27,11 +27,8 @@ async function carDataFromForm(formData: FormData) {
     category: Number(formData.get("category") ?? 1),
     mileage: formData.get("mileage") ? Number(formData.get("mileage")) : null,
     options: String(formData.get("options") ?? "").trim() || null,
-    optionsAr: String(formData.get("optionsAr") ?? "").trim() || null,
     condition: String(formData.get("condition") ?? "").trim() || null,
-    conditionAr: String(formData.get("conditionAr") ?? "").trim() || null,
     description: String(formData.get("description") ?? "").trim() || null,
-    descriptionAr: String(formData.get("descriptionAr") ?? "").trim() || null,
     images,
   };
 }
