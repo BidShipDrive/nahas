@@ -25,6 +25,8 @@ export type SavedUpload = {
 // /public/uploads/<namespace> on disk, which is fine for a Mac/dev setup.
 export async function saveUploadedImages(files: File[], namespace: "reviews" | "cars" = "reviews"): Promise<SavedUpload[]> {
   const valid = files.filter((f) => f.size > 0).slice(0, MAX_FILES);
+  if (valid.length === 0) return [];
+
   const useBlobs = process.env.NETLIFY === "true";
   const store = useBlobs ? getStore(`${namespace}-photos`) : null;
 
