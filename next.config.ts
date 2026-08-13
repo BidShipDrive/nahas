@@ -4,11 +4,11 @@ const nextConfig: NextConfig = {
   // Lets the dev server's hot-reload connection work when opening the site
   // from another device on the LAN (e.g. testing on a phone) instead of localhost.
   allowedDevOrigins: ["192.168.0.100", "192.168.1.13", "192.168.0.103"],
-  // Default is 1mb, too small for review photo uploads (a few phone photos easily
-  // exceed that). Client + server also enforce their own per-file/total limits.
+  // Default is 1mb, too small for photo uploads (car listings can have up to 20
+  // photos). Client + server also enforce their own per-file/total limits.
   experimental: {
     serverActions: {
-      bodySizeLimit: "15mb",
+      bodySizeLimit: "60mb",
     },
   },
 };

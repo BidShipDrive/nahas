@@ -15,7 +15,7 @@ export function CarForm({
     : "";
 
   return (
-    <form action={action} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form action={action} encType="multipart/form-data" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label="Make">
         <input name="make" defaultValue={car?.make} required className={inputClass} />
       </Field>
@@ -109,7 +109,26 @@ export function CarForm({
         </Field>
       </div>
       <div className="sm:col-span-2">
-        <Field label="Photo URLs (one per line)">
+        <Field label="Upload Photos">
+          <input
+            type="file"
+            name="photos"
+            accept="image/*"
+            multiple
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-white file:text-sm file:font-medium hover:file:bg-blue-700"
+          />
+        </Field>
+        {car && car.images && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {car.images.split(",").filter(Boolean).map((src) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={src} src={src} alt="" className="h-16 w-20 rounded-md object-cover border border-slate-200" />
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="sm:col-span-2">
+        <Field label="Photo URLs (one per line) — optional, for photos already hosted elsewhere">
           <textarea
             name="images"
             defaultValue={car?.images.split(",").join("\n")}

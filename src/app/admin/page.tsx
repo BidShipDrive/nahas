@@ -3,10 +3,12 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { logout } from "@/app/actions/auth";
 import { deleteCar } from "@/app/actions/cars";
+import { deleteExpiredBiddingCars } from "@/lib/car-cleanup";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
+  await deleteExpiredBiddingCars();
   const cars = await db.car.findMany({ orderBy: { createdAt: "desc" } });
   const [inquiryCount, customRequestCount, orderCount, reviewCount] = await Promise.all([
     db.inquiry.count(),

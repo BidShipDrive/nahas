@@ -3,17 +3,23 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
+import { saveUploadedImages } from "@/lib/uploads";
 
 function parseImages(raw: string) {
   return raw
     .split(/\r?\n|,/)
     .map((s) => s.trim())
-    .filter(Boolean)
-    .join(",");
+    .filter(Boolean);
 }
 
-function carDataFromForm(formData: FormData) {
+async function carDataFromForm(formData: FormData) {
   const expectedArrivalRaw = String(formData.get("expectedArrival") ?? "");
+
+  const photoFiles = formData.getAll("photos").filter((f): f is File => f instanceof File);
+  const uploaded = await saveUploadedImages(photoFiles, "cars");
+  const pastedUrls = parseImages(String(formData.get("images") ?? ""));
+  const images = [...pastedUrls, ...uploaded.map((u) => u.url)].join(",");
+
   return {
     make: String(formData.get("make") ?? "").trim(),
     model: String(formData.get("model") ?? "").trim(),
@@ -31,13 +37,13 @@ function carDataFromForm(formData: FormData) {
     expectedArrival: expectedArrivalRaw ? new Date(expectedArrivalRaw) : null,
     description: String(formData.get("description") ?? "").trim() || null,
     descriptionAr: String(formData.get("descriptionAr") ?? "").trim() || null,
-    images: parseImages(String(formData.get("images") ?? "")),
+    images,
     status: String(formData.get("status") ?? "available"),
   };
 }
 
 export async function createCar(formData: FormData) {
-  const data = carDataFromForm(formData);
+  const data = await carDataFromForm(formData);
   await db.car.create({ data });
   revalidatePath("/cars");
   revalidatePath("/admin");
@@ -45,7 +51,7 @@ export async function createCar(formData: FormData) {
 }
 
 export async function updateCar(carId: string, formData: FormData) {
-  const data = carDataFromForm(formData);
+  const data = await carDataFromForm(formData);
   await db.car.update({ where: { id: carId }, data });
   revalidatePath("/cars");
   revalidatePath(`/cars/${carId}`);
