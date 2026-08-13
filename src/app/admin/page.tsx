@@ -4,12 +4,17 @@ import { formatPrice } from "@/lib/format";
 import { logout } from "@/app/actions/auth";
 import { deleteCar } from "@/app/actions/cars";
 import { deleteExpiredBiddingCars } from "@/lib/car-cleanup";
+import { ACTIVE_CATEGORY } from "@/lib/category";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   await deleteExpiredBiddingCars();
   const cars = await db.car.findMany({ orderBy: { createdAt: "desc" } });
+  const categoryCounts = cars.reduce<Record<number, number>>((acc, car) => {
+    acc[car.category] = (acc[car.category] ?? 0) + 1;
+    return acc;
+  }, {});
   const [inquiryCount, customRequestCount, orderCount, reviewCount] = await Promise.all([
     db.inquiry.count(),
     db.customRequest.count(),
@@ -40,8 +45,14 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-slate-900">Car Listings</h2>
+      <div className="mt-8 flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900">Car Listings</h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Category {ACTIVE_CATEGORY} is live on the public site.{" "}
+            {[1, 2, 3, 4, 5].map((c) => `Cat ${c}: ${categoryCounts[c] ?? 0}`).join(" · ")}
+          </p>
+        </div>
         <Link
           href="/admin/cars/new"
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
@@ -57,6 +68,7 @@ export default async function AdminDashboardPage() {
               <th className="px-4 py-2">Car</th>
               <th className="px-4 py-2">Price</th>
               <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2">Category</th>
               <th className="px-4 py-2"></th>
             </tr>
           </thead>
@@ -68,6 +80,12 @@ export default async function AdminDashboardPage() {
                 </td>
                 <td className="px-4 py-3">{formatPrice(car.price)}</td>
                 <td className="px-4 py-3 capitalize">{car.status}</td>
+                <td className="px-4 py-3">
+                  {car.category}
+                  {car.category !== ACTIVE_CATEGORY && (
+                    <span className="ml-1.5 text-xs text-slate-400">(hidden)</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-3">
                     <Link href={`/admin/cars/${car.id}/edit`} className="text-blue-600 hover:underline">
@@ -87,7 +105,7 @@ export default async function AdminDashboardPage() {
             ))}
             {cars.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-slate-500">
+                <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
                   No cars yet — add your first one.
                 </td>
               </tr>

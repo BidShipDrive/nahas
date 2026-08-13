@@ -26,6 +26,7 @@ async function carDataFromForm(formData: FormData) {
     year: Number(formData.get("year")),
     price: Number(formData.get("price")),
     pricingType: String(formData.get("pricingType") ?? "bidding"),
+    category: Number(formData.get("category") ?? 1),
     auctionEndsAt: formData.get("auctionEndsAt")
       ? new Date(String(formData.get("auctionEndsAt")))
       : null,

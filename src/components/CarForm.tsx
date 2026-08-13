@@ -92,6 +92,15 @@ export function CarForm({
           <option value="sold">Sold</option>
         </select>
       </Field>
+      <Field label="Category (only category 1 is currently live on the public site)">
+        <select name="category" defaultValue={car?.category ?? 1} className={inputClass}>
+          <option value={1}>Category 1</option>
+          <option value={2}>Category 2</option>
+          <option value={3}>Category 3</option>
+          <option value={4}>Category 4</option>
+          <option value={5}>Category 5</option>
+        </select>
+      </Field>
       <div className="sm:col-span-2">
         <Field label="Description (English)">
           <textarea name="description" defaultValue={car?.description ?? undefined} rows={4} className={inputClass} />

@@ -17,6 +17,7 @@ model Car {
   year            Int
   price           Int
   pricingType     String    @default("bidding")
+  category        Int       @default(1)
   auctionEndsAt   DateTime?
   mileage         Int?
   options         String?
