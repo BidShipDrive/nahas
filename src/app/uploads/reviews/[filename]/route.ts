@@ -14,8 +14,8 @@ const CONTENT_TYPES: Record<string, string> = {
 export async function GET(_request: Request, { params }: { params: Promise<{ filename: string }> }) {
   const { filename } = await params;
 
-  if (process.env.NETLIFY === "true") {
-    const store = getStore("review-photos");
+  if (process.env.NODE_ENV === "production") {
+    const store = getStore("reviews-photos");
     const result = await store.getWithMetadata(filename, { type: "arrayBuffer" });
     if (!result) {
       return new Response("Not found", { status: 404 });

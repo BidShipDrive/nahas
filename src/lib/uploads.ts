@@ -19,15 +19,21 @@ export type SavedUpload = {
 // convention as Car.images/Review.images) plus the raw buffers, so the caller
 // can also attach them to a notification email without re-reading storage.
 //
-// In production (on Netlify, where NETLIFY=true is set automatically) this
-// writes to Netlify Blobs, which persists across requests/deploys. In local
-// dev there's no Blobs context configured, so it falls back to writing to
-// /public/uploads/<namespace> on disk, which is fine for a Mac/dev setup.
+// In production this writes to Netlify Blobs, which persists across requests
+// /deploys. In local dev there's no Blobs context configured, so it falls
+// back to writing to /public/uploads/<namespace> on disk, which is fine for
+// a Mac/dev setup.
+//
+// Gated on NODE_ENV rather than process.env.NETLIFY: the latter is not
+// reliably propagated into this Next.js Server Action's runtime context on
+// Netlify, so it silently evaluated false in production and fell through to
+// the disk-write path — which then crashed anyway, since AWS Lambda (what
+// Netlify Functions run on) has a read-only filesystem outside of /tmp.
 export async function saveUploadedImages(files: File[], namespace: "reviews" | "cars" = "reviews"): Promise<SavedUpload[]> {
   const valid = files.filter((f) => f.size > 0).slice(0, MAX_FILES);
   if (valid.length === 0) return [];
 
-  const useBlobs = process.env.NETLIFY === "true";
+  const useBlobs = process.env.NODE_ENV === "production";
   const store = useBlobs ? getStore(`${namespace}-photos`) : null;
 
   let uploadDir: string | null = null;
