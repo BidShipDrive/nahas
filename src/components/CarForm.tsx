@@ -1,3 +1,6 @@
+"use client";
+
+import { useRef, useState, useTransition } from "react";
 import type { Car } from "@/generated/prisma/client";
 
 export function CarForm({
@@ -7,8 +10,70 @@ export function CarForm({
   car?: Car;
   action: (formData: FormData) => void;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    if (!form.reportValidity()) return;
+
+    setError(null);
+
+    const formData = new FormData(form);
+    const fileInput = form.elements.namedItem("photos") as HTMLInputElement | null;
+    const files = fileInput?.files ? Array.from(fileInput.files) : [];
+    formData.delete("photos");
+
+    // Photos are uploaded one at a time to /api/upload (small individual
+    // requests) rather than attached to this form's own submission, because
+    // Netlify Functions run on AWS Lambda, which hard-caps synchronous
+    // request payloads at ~6MB — a limit Next.js's own bodySizeLimit config
+    // can't override since it's enforced below the Next.js server entirely.
+    // Bundling multiple photos into one multipart submission tripped that
+    // ceiling and the whole request came back as a 503 with no application
+    // log at all.
+    if (files.length > 0) {
+      setUploading(true);
+      try {
+        const uploadedUrls: string[] = [];
+        for (const file of files) {
+          const singleFormData = new FormData();
+          singleFormData.append("file", file);
+          singleFormData.append("namespace", "cars");
+          const res = await fetch("/api/upload", { method: "POST", body: singleFormData });
+          if (!res.ok) {
+            throw new Error(`Failed to upload ${file.name}`);
+          }
+          const data = (await res.json()) as { url: string };
+          uploadedUrls.push(data.url);
+        }
+        const existingImages = String(formData.get("images") ?? "");
+        formData.set("images", [existingImages, ...uploadedUrls].filter(Boolean).join("\n"));
+      } catch {
+        setUploading(false);
+        setError("One or more photos failed to upload. Please try again.");
+        return;
+      }
+      setUploading(false);
+    }
+
+    startTransition(() => {
+      action(formData);
+    });
+  }
+
+  const busy = uploading || pending;
+
   return (
-    <form action={action} encType="multipart/form-data" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      encType="multipart/form-data"
+      className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+    >
       <Field label="Make">
         <input name="make" defaultValue={car?.make} required className={inputClass} />
       </Field>
@@ -71,6 +136,7 @@ export function CarForm({
             name="photos"
             accept="image/*"
             multiple
+            disabled={busy}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-blue-600 file:px-3 file:py-1.5 file:text-white file:text-sm file:font-medium hover:file:bg-blue-700"
           />
         </Field>
@@ -94,9 +160,14 @@ export function CarForm({
           />
         </Field>
       </div>
+      {error && <div className="sm:col-span-2 text-sm text-red-600">{error}</div>}
       <div className="sm:col-span-2">
-        <button type="submit" className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700">
-          {car ? "Save Changes" : "Add Car"}
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+        >
+          {uploading ? "Uploading photos..." : pending ? "Saving..." : car ? "Save Changes" : "Add Car"}
         </button>
       </div>
     </form>
