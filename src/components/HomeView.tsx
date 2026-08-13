@@ -8,7 +8,15 @@ import { CarsShowcase } from "./CarsShowcase";
 import { HeroScene } from "./HeroScene";
 import { ReviewCard } from "./ReviewCard";
 
-export function HomeView({ cars, reviews }: { cars: Car[]; reviews: Review[] }) {
+export function HomeView({
+  cars,
+  reviews,
+  categoryLiveUntil,
+}: {
+  cars: Car[];
+  reviews: Review[];
+  categoryLiveUntil?: Date | null;
+}) {
   const { dict } = useLanguage();
 
   const steps = [
@@ -62,7 +70,7 @@ export function HomeView({ cars, reviews }: { cars: Car[]; reviews: Review[] }) 
         {cars.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400">{dict.home.showcaseEmpty}</p>
         ) : (
-          <CarsShowcase cars={cars} />
+          <CarsShowcase cars={cars} liveUntil={categoryLiveUntil} />
         )}
       </section>
 

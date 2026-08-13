@@ -1,15 +1,13 @@
 import { db } from "@/lib/db";
-import { deleteExpiredBiddingCars } from "@/lib/car-cleanup";
 import { ACTIVE_CATEGORY } from "@/lib/category";
 import { HomeView } from "@/components/HomeView";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  await deleteExpiredBiddingCars();
-  const [cars, reviews] = await Promise.all([
+  const [cars, reviews, schedule] = await Promise.all([
     db.car.findMany({
-      where: { status: { in: ["available", "incoming"] }, category: ACTIVE_CATEGORY },
+      where: { category: ACTIVE_CATEGORY },
       orderBy: { createdAt: "desc" },
       take: 8,
     }),
@@ -18,7 +16,8 @@ export default async function HomePage() {
       orderBy: { createdAt: "desc" },
       take: 3,
     }),
+    db.categorySchedule.findUnique({ where: { category: ACTIVE_CATEGORY } }),
   ]);
 
-  return <HomeView cars={cars} reviews={reviews} />;
+  return <HomeView cars={cars} reviews={reviews} categoryLiveUntil={schedule?.liveUntil} />;
 }

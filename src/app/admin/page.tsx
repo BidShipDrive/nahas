@@ -3,24 +3,25 @@ import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { logout } from "@/app/actions/auth";
 import { deleteCar } from "@/app/actions/cars";
-import { deleteExpiredBiddingCars } from "@/lib/car-cleanup";
-import { ACTIVE_CATEGORY } from "@/lib/category";
+import { setCategoryLiveUntil } from "@/app/actions/categorySchedule";
+import { ACTIVE_CATEGORY, utcToBusinessLocalInputValue } from "@/lib/category";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  await deleteExpiredBiddingCars();
   const cars = await db.car.findMany({ orderBy: { createdAt: "desc" } });
   const categoryCounts = cars.reduce<Record<number, number>>((acc, car) => {
     acc[car.category] = (acc[car.category] ?? 0) + 1;
     return acc;
   }, {});
-  const [inquiryCount, customRequestCount, orderCount, reviewCount] = await Promise.all([
+  const [inquiryCount, customRequestCount, orderCount, reviewCount, schedules] = await Promise.all([
     db.inquiry.count(),
     db.customRequest.count(),
     db.order.count(),
     db.review.count(),
+    db.categorySchedule.findMany(),
   ]);
+  const liveUntilByCategory = new Map(schedules.map((s) => [s.category, s.liveUntil]));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -45,14 +46,50 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-wrap justify-between items-center gap-3">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900">Car Listings</h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Category {ACTIVE_CATEGORY} is live on the public site.{" "}
-            {[1, 2, 3, 4, 5].map((c) => `Cat ${c}: ${categoryCounts[c] ?? 0}`).join(" · ")}
-          </p>
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold text-slate-900">Category Schedule</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Category {ACTIVE_CATEGORY} is the one shown on the public site. Set when its countdown ends — every
+          car in that category shows the same countdown. Leave blank to hide the countdown. Times are Beirut
+          time.
+        </p>
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-5 gap-3">
+          {[1, 2, 3, 4, 5].map((cat) => {
+            const liveUntil = liveUntilByCategory.get(cat);
+            const value = liveUntil ? utcToBusinessLocalInputValue(new Date(liveUntil)) : "";
+            return (
+              <form
+                key={cat}
+                action={async (formData: FormData) => {
+                  "use server";
+                  await setCategoryLiveUntil(cat, formData);
+                }}
+                className="rounded-lg border border-slate-200 p-3"
+              >
+                <div className="text-sm font-medium text-slate-900">
+                  Category {cat} {cat === ACTIVE_CATEGORY && <span className="text-blue-600">(live)</span>}
+                </div>
+                <div className="mt-1 text-xs text-slate-500">{categoryCounts[cat] ?? 0} cars</div>
+                <input
+                  type="datetime-local"
+                  name="liveUntil"
+                  defaultValue={value}
+                  className="mt-2 w-full rounded-md border border-slate-300 px-2 py-1.5 text-xs"
+                />
+                <button
+                  type="submit"
+                  className="mt-2 w-full rounded-md bg-slate-900 px-2 py-1.5 text-xs font-semibold text-white hover:bg-slate-700"
+                >
+                  Save
+                </button>
+              </form>
+            );
+          })}
         </div>
+      </div>
+
+      <div className="mt-8 flex flex-wrap justify-between items-center gap-3">
+        <h2 className="text-lg font-semibold text-slate-900">Car Listings</h2>
         <Link
           href="/admin/cars/new"
           className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
@@ -67,7 +104,6 @@ export default async function AdminDashboardPage() {
             <tr>
               <th className="px-4 py-2">Car</th>
               <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Status</th>
               <th className="px-4 py-2">Category</th>
               <th className="px-4 py-2"></th>
             </tr>
@@ -79,7 +115,6 @@ export default async function AdminDashboardPage() {
                   {car.year} {car.make} {car.model}
                 </td>
                 <td className="px-4 py-3">{formatPrice(car.price)}</td>
-                <td className="px-4 py-3 capitalize">{car.status}</td>
                 <td className="px-4 py-3">
                   {car.category}
                   {car.category !== ACTIVE_CATEGORY && (
@@ -105,7 +140,7 @@ export default async function AdminDashboardPage() {
             ))}
             {cars.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
+                <td colSpan={4} className="px-4 py-6 text-center text-slate-500">
                   No cars yet — add your first one.
                 </td>
               </tr>

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import type { Car } from "@/generated/prisma/client";
 import { CarCard } from "./CarCard";
 
-export function CarsShowcase({ cars }: { cars: Car[] }) {
+export function CarsShowcase({ cars, liveUntil }: { cars: Car[]; liveUntil?: Date | null }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   function scrollBy(amount: number) {
@@ -19,7 +19,7 @@ export function CarsShowcase({ cars }: { cars: Car[] }) {
       >
         {cars.map((car) => (
           <div key={car.id} className="min-w-[260px] sm:min-w-[300px] snap-start">
-            <CarCard car={car} />
+            <CarCard car={car} liveUntil={liveUntil} />
           </div>
         ))}
       </div>

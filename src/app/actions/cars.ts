@@ -13,8 +13,6 @@ function parseImages(raw: string) {
 }
 
 async function carDataFromForm(formData: FormData) {
-  const expectedArrivalRaw = String(formData.get("expectedArrival") ?? "");
-
   const photoFiles = formData.getAll("photos").filter((f): f is File => f instanceof File);
   const uploaded = await saveUploadedImages(photoFiles, "cars");
   const pastedUrls = parseImages(String(formData.get("images") ?? ""));
@@ -27,19 +25,14 @@ async function carDataFromForm(formData: FormData) {
     price: Number(formData.get("price")),
     pricingType: String(formData.get("pricingType") ?? "bidding"),
     category: Number(formData.get("category") ?? 1),
-    auctionEndsAt: formData.get("auctionEndsAt")
-      ? new Date(String(formData.get("auctionEndsAt")))
-      : null,
     mileage: formData.get("mileage") ? Number(formData.get("mileage")) : null,
     options: String(formData.get("options") ?? "").trim() || null,
     optionsAr: String(formData.get("optionsAr") ?? "").trim() || null,
     condition: String(formData.get("condition") ?? "").trim() || null,
     conditionAr: String(formData.get("conditionAr") ?? "").trim() || null,
-    expectedArrival: expectedArrivalRaw ? new Date(expectedArrivalRaw) : null,
     description: String(formData.get("description") ?? "").trim() || null,
     descriptionAr: String(formData.get("descriptionAr") ?? "").trim() || null,
     images,
-    status: String(formData.get("status") ?? "available"),
   };
 }
 

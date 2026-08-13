@@ -11,7 +11,7 @@ import { modelsForMake } from "@/lib/car-models";
 const filterInputClass =
   "w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 px-3 py-2 text-sm";
 
-export function CarsListView({ cars }: { cars: Car[] }) {
+export function CarsListView({ cars, categoryLiveUntil }: { cars: Car[]; categoryLiveUntil?: Date | null }) {
   const { dict } = useLanguage();
   const [filter, setFilter] = useState<"all" | "bidding" | "buy_now">("all");
   const [make, setMake] = useState("");
@@ -76,7 +76,7 @@ export function CarsListView({ cars }: { cars: Car[] }) {
       ) : (
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((car) => (
-            <CarCard key={car.id} car={car} />
+            <CarCard key={car.id} car={car} liveUntil={categoryLiveUntil} />
           ))}
         </div>
       )}

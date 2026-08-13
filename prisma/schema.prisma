@@ -34,6 +34,13 @@ model Car {
   inquiries       Inquiry[]
 }
 
+model CategorySchedule {
+  id        String    @id @default(cuid())
+  category  Int       @unique
+  liveUntil DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
 model Inquiry {
   id        String   @id @default(cuid())
   carId     String?

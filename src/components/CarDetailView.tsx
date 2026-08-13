@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import type { Car } from "@/generated/prisma/client";
-import { formatPrice, formatMileage, carImages, formatDate } from "@/lib/format";
+import { formatPrice, formatMileage, carImages } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { InquiryForm } from "./InquiryForm";
 import { AuctionCountdown } from "./AuctionCountdown";
 
-export function CarDetailView({ car }: { car: Car }) {
+export function CarDetailView({ car, liveUntil }: { car: Car; liveUntil?: Date | null }) {
   const { dict, lang } = useLanguage();
   const images = carImages(car.images);
   const [active, setActive] = useState(0);
@@ -56,9 +56,9 @@ export function CarDetailView({ car }: { car: Car }) {
           {formatPrice(car.price)}
         </p>
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{dict.cars.priceExcludes}</p>
-        {car.auctionEndsAt && (
+        {liveUntil && (
           <div className="mt-3">
-            <AuctionCountdown endsAt={car.auctionEndsAt} />
+            <AuctionCountdown endsAt={liveUntil} />
           </div>
         )}
 
@@ -71,12 +71,6 @@ export function CarDetailView({ car }: { car: Car }) {
             <div>
               <dt className="text-slate-500 dark:text-slate-400">{dict.cars.condition}</dt>
               <dd className="font-medium text-slate-900 dark:text-slate-100">{condition}</dd>
-            </div>
-          )}
-          {car.expectedArrival && (
-            <div>
-              <dt className="text-slate-500 dark:text-slate-400">{dict.cars.arrival}</dt>
-              <dd className="font-medium text-slate-900 dark:text-slate-100">{formatDate(car.expectedArrival, lang)}</dd>
             </div>
           )}
           {options && (

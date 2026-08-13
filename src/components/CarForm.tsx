@@ -7,13 +7,6 @@ export function CarForm({
   car?: Car;
   action: (formData: FormData) => void;
 }) {
-  const expectedArrivalValue = car?.expectedArrival
-    ? new Date(car.expectedArrival).toISOString().slice(0, 10)
-    : "";
-  const auctionEndsAtValue = car?.auctionEndsAt
-    ? new Date(car.auctionEndsAt).toISOString().slice(0, 16)
-    : "";
-
   return (
     <form action={action} encType="multipart/form-data" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <Field label="Make">
@@ -37,14 +30,6 @@ export function CarForm({
       <Field label="Mileage">
         <input type="number" name="mileage" defaultValue={car?.mileage ?? undefined} className={inputClass} />
       </Field>
-      <Field label="Auction Ends At">
-        <input
-          type="datetime-local"
-          name="auctionEndsAt"
-          defaultValue={auctionEndsAtValue}
-          className={inputClass}
-        />
-      </Field>
       <Field label="Condition (English)">
         <input
           name="condition"
@@ -60,9 +45,6 @@ export function CarForm({
           dir="rtl"
           className={inputClass}
         />
-      </Field>
-      <Field label="Expected Arrival">
-        <input type="date" name="expectedArrival" defaultValue={expectedArrivalValue} className={inputClass} />
       </Field>
       <div className="sm:col-span-2">
         <Field label="Options (English)">
@@ -84,14 +66,6 @@ export function CarForm({
           />
         </Field>
       </div>
-      <Field label="Status">
-        <select name="status" defaultValue={car?.status ?? "available"} className={inputClass}>
-          <option value="available">Available</option>
-          <option value="incoming">Arriving Soon</option>
-          <option value="reserved">Reserved</option>
-          <option value="sold">Sold</option>
-        </select>
-      </Field>
       <Field label="Category (only category 1 is currently live on the public site)">
         <select name="category" defaultValue={car?.category ?? 1} className={inputClass}>
           <option value={1}>Category 1</option>

@@ -6,7 +6,7 @@ import { formatPrice, formatMileage, carImages } from "@/lib/format";
 import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import { AuctionCountdown } from "./AuctionCountdown";
 
-export function CarCard({ car }: { car: Car }) {
+export function CarCard({ car, liveUntil }: { car: Car; liveUntil?: Date | null }) {
   const { dict } = useLanguage();
   const images = carImages(car.images);
   const cover = images[0];
@@ -42,9 +42,9 @@ export function CarCard({ car }: { car: Car }) {
           {formatPrice(car.price)}
         </p>
         <p className="text-xs text-slate-500 dark:text-slate-400">{dict.cars.priceExcludes}</p>
-        {car.auctionEndsAt && (
+        {liveUntil && (
           <div className="mt-2">
-            <AuctionCountdown endsAt={car.auctionEndsAt} />
+            <AuctionCountdown endsAt={liveUntil} />
           </div>
         )}
         <p className="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
